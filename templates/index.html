@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>3. Semester – Pflichtmodul-Tutorien</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[url('/static/bg.jpg')] bg-cover bg-center bg-fixed min-h-screen p-6">
+
+    <div class="max-w-6xl mx-auto bg-white/95 p-6 shadow-2xl border border-gray-300">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Übersicht der Pflichtmodul-Tutorien</h1>
+
+        
+        <div class="mb-4 flex flex-col md:flex-row gap-3">
+            
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Nach Modul filtern..." 
+                  class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#800020]">
+            
+            
+            <input type="text" id="timeInput" onkeyup="filterTable()" placeholder="Nach Beginn filtern..." 
+                  class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#800020]">
+        </div>
+
+        
+        <div class="bg-white shadow-md rounded-none overflow-hidden border border-gray-300">
+            <table id="tutorTable" class="w-full border-collapse divide-y divide-gray-300">
+                <thead>
+                    <tr class="bg-[#800020] text-white text-left">
+                        <th class="py-3 px-4 border-r border-[#6b1d2f]">Tutor/in</th>
+                        <th class="py-3 px-4 border-r border-[#6b1d2f]">Modul</th>
+                        <th class="py-3 px-4 border-r border-[#6b1d2f]">Wochentag</th>
+                        <th class="py-3 px-4 border-r border-[#6b1d2f]">Beginn</th>
+                        <th class="py-3 px-4 border-r border-[#6b1d2f]">Ende</th>
+                        <th class="py-3 px-4">Raum</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-300">
+                    {% for tutor in tutors %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-4 font-medium border-r border-gray-300">{{ tutor['tutor_name'] }}</td>
+                        <td class="py-3 px-4 font-semibold text-[#800020] border-r border-gray-300">{{ tutor['course_name'] }}</td>
+                        <td class="py-3 px-4 border-r border-gray-300">{{ tutor['day'] }}</td>
+                        <td class="py-3 px-4 border-r border-gray-300 beginn-time">{{ tutor['start_time'] }}</td>
+                        <td class="py-3 px-4 border-r border-gray-300">{{ tutor['end_time'] }}</td>
+                        <td class="py-3 px-4 text-gray-700 font-mono">{{ tutor['room_number'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+    <script>
+        function filterTable() {
+            let searchInput = document.getElementById("searchInput").value.toLowerCase();
+            let timeInput = document.getElementById("timeInput").value.toLowerCase();
+            let table = document.getElementById("tutorTable");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td");
+                let rowText = "";
+                
+                
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        rowText += td[j].innerHTML.toLowerCase() + " ";
+                    }
+                }
+
+                
+                let beginnCell = tr[i].getElementsByClassName("beginn-time")[0];
+                let beginnText = beginnCell ? beginnCell.innerHTML.toLowerCase() : "";
+
+                
+                let matchesSearch = rowText.indexOf(searchInput) > -1;
+                let matchesTime = beginnText.indexOf(timeInput) > -1;
+
+                if (matchesSearch && matchesTime) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
